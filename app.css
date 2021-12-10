@@ -1,0 +1,149 @@
+body{
+	background-color: #FFC56E;
+}
+#bottom{
+	background-color: #FFC56E;
+    color: #B87333;
+}
+label{
+    margin-top:10px;
+}
+.container-fluid{
+	background-color: #fff;
+	min-height: 400px;
+}
+.btn-default{
+    /* BS4 changed the appearance of btn-default on anchor tags.
+      I liked the old way better... so that's
+      what I am making happen here.  */
+    background-color: #6ea8ff;
+    color: white;
+   
+}
+.btn {
+    /*make text wrap nicely in buttons */
+    white-space:normal;
+
+}
+
+.locked {
+    display: none !important; /*locked content must not be shown to user*/
+}
+
+.unlocked {
+    border-width: initial; /*set border-width to whatever the default is. */
+}
+
+.secured {
+    border-width: initial; /*set border-width to whatever the default is. */
+}
+.button1 {
+   color: white;
+   background-color: #FFC56E !important;
+   border-color:white;
+}
+.buttonbord{
+    border-color:white;
+    background-color:white;
+}
+.form1 {
+    text-align: center;
+}
+
+#web-name{
+    color:#B87333;
+    font-weight:bold;
+    -webkit-text-stroke: 1px #B87333;
+}
+#copy-right{
+    color:#B87333;
+    font-weight:bold;
+    -webkit-text-stroke: 1px #B87333;
+}
+.navbar-light{
+    background-color: #FFC56E;
+}
+.nav-link{
+    color:#B87333 !important;
+    font-weight:bold;
+    -webkit-text-stroke: 1px #B87333;
+}
+h2{
+    color: #B87333;
+}
+#emotion_data{
+    color:#B87333;
+    font-size: 1.5em;
+    
+}
+.journalbtn{
+    border: none;
+    color:white;
+    padding: 14px 40px;
+    border-radius: 4px;
+    width: 40%;
+    margin: 3%;
+    font-size: 16px;
+    background-color: #5599ff;
+}
+.journalbtn:hover{
+    background-color: #6ea8ff;
+}
+textarea {
+    width: 100%;
+    height: 300px;
+    padding: 12px 20px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 16px;
+    resize: none;
+  }
+  #journalTitle{
+    border: 2px solid #ccc;
+    width: 75%;
+    border-radius: 4px;
+  }
+.optionbtn{
+    background-color: #ff6655;
+    width:100%;
+    font-size: 20px;
+    color: white;
+   font-weight: bold;
+    height:50px;
+    border: none;
+}
+.optionbtn:hover{
+    background-color: #ff7d6e;
+}
+.return{
+    background-color: #5599ff;
+    width:100%;
+    font-size: 20px;
+    color: white;
+    font-weight: bold;
+    height:50px;
+    border: none;
+    padding: 14px 40px;
+    
+}
+.return:hover{
+    background-color: #6ea8ff;
+}
+.table{
+    color:#c9803c;
+}
+.color{
+    color: #c9803c;
+}
+#act{
+    border-style: dotted;
+    border-color:#6ea8ff;
+    padding: 5%;
+}
+.divider{
+    width:5px;
+    height:auto;
+    display:inline-block;
+}
