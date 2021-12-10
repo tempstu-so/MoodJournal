@@ -1,0 +1,323 @@
+let express = require('express'); //import express, because I want easier management of GET and POST requests.  
+//let fs = require('fs');  //fs is used to manipulate the file system
+let MySql = require('sync-mysql');  //MySql is used to manipulate a database connection
+"use strict";
+
+
+//set up the database connection 
+const options = {
+  user: '',
+  password: '',
+  database: '',
+  host: 'dataanalytics.temple.edu'
+};
+
+// create the database connection
+const connection = new MySql(options);
+
+
+
+let app = express();  //the express method returns an instance of a app object
+app.use(express.urlencoded({extended:false}));  //use this because incoming data is urlencoded
+
+app.use(function(req, res, next) {
+    express.urlencoded({extended:false})
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
+    next();  //go process the next matching condition
+  });
+
+//supporting functions *******************************************************************
+
+//feature create journal entry
+
+let createEntry = function(res,journaltitle,journalwriting,journalowner){
+   let txtSQL = "insert into journal_entries (journaltitle,journalwriting,journalowner) values (?,?,?);";
+   
+    try{
+        var result = connection.query(txtSQL,[journaltitle,journalwriting,journalowner]);
+    }
+    catch(e){
+        console.log(e);
+        responseWrite(res,"Unexpected Database Error (createEntry) ",500);
+        return;
+    }
+    responseWrite(res,"journalid= "+result.insertId,200); 
+    return;
+
+}
+
+//feature 1
+
+let specEntry = function(res,journalid){
+    let txtSQL= "select * from journal_entries where journalid = ?;";
+
+    try{
+        var result = connection.query(txtSQL,[journalid]);
+    }
+    catch(e){
+        console.log(e)
+        responseWrite(res,"Unexpected Database Error (specEntry)",500);
+        return;
+    }
+    responseWrite(res,result,200);
+    return;
+}
+
+//feature 2
+
+let listWhole = function(res,journalowner){
+    let txtSQL= "select * from journal_entries where journalowner = ?;"
+    try{
+        var result= connection.query(txtSQL,[journalowner]);
+    }
+    catch(e){
+        console.log(e);
+        responseWrite(res,"Unexpected Database Error (listWhole)",500);
+        return;
+    }
+    responseWrite(res,result,200);
+    return;
+}
+
+  //inserts the value chosen
+let compareHands = function(userChoice, journalowner){
+    
+    let result = [];
+    result[0] = "You are feeling: " + userChoice + "<br>";
+    result[1] = -1;
+
+    if (userChoice == "happy"){
+        
+        result[1] = 0.5;
+        addHistory(journalowner,1,0,0,0);
+    }
+
+    if (userChoice == "neutral"){
+       
+        result[1] = 1; 
+        addHistory(journalowner,0,1,0,0); 
+    }
+
+    if (userChoice == "annoyed"){
+        result[1] = 1.5;   
+        addHistory(journalowner,0,0,1,0);  
+    }
+
+    if (userChoice == "angry"){
+        
+        result[1] = 2;    
+        addHistory(journalowner,0,0,0,1); 
+    }
+
+    return result;
+};
+  
+// records entry of emotions 
+let addHistory = function(journalowner,happy,neutral,annoyed,angry){
+    //database magic happens here
+    //console.log(usertoken);  
+    let txtSQL = 'INSERT INTO emoji(journalowner,happy,neutral,annoyed,angry) VALUES (?,?,?,?,?)';
+    let result = connection.query(txtSQL,[journalowner,happy,neutral,annoyed,angry])
+    return result;
+  };
+  
+
+// fixNull will check to see if x is null.  
+// If x is null the function will return y.
+// Otherwise it will return x.
+let fixNull =function(x,y){
+    if (x == null){
+      return y;
+    } else {
+      return x;
+    }
+  };
+
+  
+  
+let getHistory = function(journalowner){
+
+    let result = "History:<br>";   
+    let txtSQL = 'select sum(happy) as happydata, ' + 
+    ' sum(neutral) as neutraldata, ' + ' sum(annoyed) as annoyeddata, ' +
+    ' sum(angry) as angrydata from emoji where journalowner = ?;'
+    //month(createtime) = 11 and year(createtime)=2021 and
+
+    let results = connection.query(txtSQL, [journalowner]);
+    
+    let happy = fixNull(results[0]['happydata'],0);
+    let neutral = fixNull(results[0]['neutraldata'],0);
+    let annoyed = fixNull(results[0]['annoyeddata'],0);
+    let angry = fixNull(results[0]['angrydata'],0);
+    result += "Happy: " + happy + '<br>';
+    result += "Neutral: " + neutral + '<br>';
+    result += "Annoyed: " + annoyed + '<br>';
+    result += "Angry: " + angry + '<br>';
+    return result;
+    
+};
+
+
+
+
+
+
+//responseWrite is a supporting function.  It sends 
+// output to the API consumer and ends the response.
+// This is hard-coded to always send a json response.
+let responseWrite = function(res,Output,responseStatus){
+    res.writeHead(responseStatus, {'Content-Type': 'application/json'});
+    res.write(JSON.stringify(Output));
+    res.end();
+};
+
+//error trapping ************************************************************************
+//feature 0
+app.post("/journals",function(req,res,next){
+    let journaltitle = req.body.journaltitle;
+    let journalwriting = req.body.journalwriting;
+    let journalowner = req.body.journalowner;
+
+
+    if(journaltitle == undefined || journaltitle == "" || !isNaN(journaltitle)){
+        responseWrite(res,"Error in POST task. The journaltitle token is missing.",400);
+        return;
+    }
+    if(journalwriting == undefined || journalwriting == "" || !isNaN(journalwriting)){
+        responseWrite(res,"Error in POST task. The journalwriting token is missing.",400);
+        return;
+    }
+    if(journalowner == undefined || journalowner == "" || isNaN(journalowner)){
+        responseWrite(res,"Error in POST task. The journalowner token is missing. The journalowner must be a number.",400);
+        return;
+    }
+    next();
+});
+
+//feature 1
+
+app.get("/journal",function(req,res,next){
+    let journalid = req.query.journalid;
+
+    if (journalid == "" || journalid == undefined || isNaN(journalid)){
+        responseWrite(res,"Error in GET task. The journalid token is missing. The journalid must be a number.",400);
+        return;
+    }
+    next();
+});
+
+//feature 2
+
+app.get("/journals",function(req,res,next){
+    let journalowner= req.query.journalowner;
+
+   if(journalowner == undefined || journalowner == "" || isNaN(journalowner)){
+        responseWrite(res,"Error in GET task. The journalowner token is missing. The journalowner must be a number.",400);
+        return;
+    }
+    next();    
+});
+
+
+app.get('/select', function(req, res, next) {
+    let emotion = req.query.emotion;
+    if (emotion == undefined){
+        responseWrite(res,"Token emotion not provided",400);
+        return;
+    }
+    if (emotion !== "happy" && emotion !== "neutral"  && emotion !== "annoyed" && emotion !=="angry"){
+        responseWrite(res,"emotion must be happy, neutral, annoyed, or angry",400);
+        return;
+    }
+    next();
+});
+
+app.get('/history',function(req,res,next){
+    let journalowner = req.query.journalowner;
+    if (journalowner == undefined || isNaN(journalowner) || journalowner == ""){
+        let result = "Error. No journalowner.  No history.";
+        responseWrite(res,result,400);
+        return;
+    }
+    next();
+});
+
+
+
+//event handlers ************************************************************************
+
+//feature 0
+app.post("/journals",function(req,res){
+    let journaltitle = req.body.journaltitle;
+    let journalwriting = req.body.journalwriting;
+    let journalowner = req.body.journalowner;
+    createEntry(res,journaltitle,journalwriting,journalowner);
+
+
+});
+
+
+//feature 1
+
+app.get("/journal",function(req,res){
+    let journalid = req.query.journalid;
+    specEntry(res,journalid);
+});
+
+//feature 2
+
+app.get("/journals",function(req,res){
+    let journalowner= req.query.journalowner;
+    listWhole(res,journalowner);
+});
+
+app.get("/select",function(req,res){
+    let emotion = req.query.emotion; 
+    let journalowner = req.query.journalowner;
+    
+    
+    //weird exceptional case below
+    if (journalowner == undefined || isNaN(journalowner)){
+        journalowner = 0
+    }
+    
+    let outcome= compareHands(emotion,journalowner);
+  
+    responseWrite(res,outcome,200);
+    return;
+});
+
+app.get("/history",function(req,res){
+    let journalowner = req.query.journalowner;
+    let result = getHistory(journalowner);
+    responseWrite(res,result,200);
+});
+
+
+//what the app should do when it received a "GET" against the root
+app.get('/', function(req, res) {
+    //what to do if request has no route ... show instructions
+    let message = [];
+    
+    message[message.length] = "To create a journal entry, POST to ./journals and provide journaltitle, journalwriting, and journalowner. The result will be the journalid created. ";
+    message[message.length] = "To get one specific entry, issue a GET against ./journal and provide the journalid. The result will be a JSON object representing the task.";
+    message[message.length] = "To get a list of previous entries for a specific user issue a GET against ./journals and provide the journalowner you want. The result will be a JSON object with 0 or more task records in it. ";
+	message[message.length] = "To enter an how you feel, issue a GET against ./select and provide the emotion and journalowner. Valid emotions input are happy, neutral, annoyed, angry. "
+    message[message.length] = "To get count on emotions issue a GET against ./history and provide journalowner."
+    
+    responseWrite(res,message,200);
+    return
+});
+
+  
+//This piece of code creates the server  
+//and listens for requests on a specific port
+//we are also generating a message once the 
+//server is created
+let server = app.listen(8221, "0.0.0.0" ,function(){
+    let host = server.address().address;
+    let port = server.address().port;
+    console.log("The endpoint server is listening on port:" + port);
+});
