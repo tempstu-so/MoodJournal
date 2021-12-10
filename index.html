@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <title>Mood Journal Application</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap 4 References -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <!-- Link to FontAwesome -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Your custom CSS -->
+    <link rel="stylesheet" href="css/app.css">
+    <!-- Your custom JavaScript -->
+    <script src="js/app.js"></script>
+
+    <!-- Link to image for the favicon -->
+    <link rel="icon" href="images/MoodJournal2.png">
+</head>
+
+<body>
+
+<!-- Top Navigation Bar -->
+
+<nav class="navbar navbar-expand-md navbar-light fixed-top">
+    <!-- Logo -->
+      <a id="web-name" class ="navbar-brand" href="index.html">
+          <img alt="Mood Journal Icon" src="images/MoodJournal2.png" style="width:40px;">
+          &nbsp;&nbsp;Mood Journal
+      </a>
+
+    <!-- Toggler Icon for responsiveness -->
+    <button id="toggle-icon" class="navbar-toggler secured" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+    <!--Menu sets on the left -->
+        <ul class="navbar-nav mr-auto">
+        </ul>
+    <!--Menu sets on the right -->
+    <!--Each individual item can be secured by adding the class: secured -->
+        <ul class="navbar-nav ml-auto">
+           
+            <li class="nav-item secured">
+                <a id="link-main" class="nav-link" href="#div-main"><i class="fa fa-bars"></i> Main Menu </a>
+            </li>
+            <li class="nav-item secured">
+                <a id="link-logout" class="nav-link" href="#div-login"><i class="fa fa-sign-out"></i>Logout</a>
+            </li>
+        </ul>    
+    </div>
+</nav>
+
+<br><br><br><br>
+
+<!--Start container for BS4 (Bootstrap 4) formatting-->
+<div class="container-fluid">
+
+    <div class="row text-center">
+        <div class="col-md-12">
+			&nbsp; <!-- place holder for additional top row content -->
+        </div>
+    </div>
+
+    <div class="row">
+    <div class="col-md-2"></div>
+
+		<div class="col-md-8 content-wrapper " id="div-login" style="display: none;">
+                <form id='form-login'>
+				<label for="username">User name:</label>
+				<input type="text" name="username" id="username" class="form-control" >
+				<label for="password">Password:</label>
+                <input type="password" name="password" id="password" class="form-control" >
+                <br>
+				<div class="text-center">
+				<input type="button" value="Login" name="btnLogin" id="btnLogin" class="btn btn-primary" style="font-size:2em;width:100%;" >
+                </div>
+                <br>
+                <div id='login_message' class="">
+                </div>
+			</form>
+		</div>
+
+        <div class="col-md-8 content-wrapper" id="div-options" style="display: none;">
+            <div class="text-center">
+            <br><br>
+                <input type="button" value="Add Mood" id="btnAddMood" class="optionbtn">
+             <br><br>
+                <input type="button" value="Write in Journal" id="btnWrite" class="optionbtn">
+            <br><br>
+                <input type="button" value="Select Activity at Random" id="btnBored" class="optionbtn">
+            <br><br>
+                <input type="button" value="Analyze Mood" id="btnAnalyze" class="optionbtn">
+            <br><br>
+                <input type="button" value="Previous Journal Entries" id="btnPast" class="optionbtn">
+            
+           
+            </div>
+
+        </div>
+
+
+
+        <div class="col-md-8 content-wrapper form1" id="div-mood" style="display: none;">
+            <h2>Hello please select an emoji representing your mood</h2>
+            
+            <br>
+            <button id="happybtn" class= "button1 buttonbord" style='font-size:100px;' ></button>
+            
+            <button id="neutralbtn" class= "button1 buttonbord" style='font-size:100px;' ></button>
+            
+            <button id="annoybtn" class= "button1 buttonbord" style='font-size:100px;' ></button>
+            
+            <button id="angrybtn" class= "button1 buttonbord" style='font-size:100px;' ></button>
+            
+            <br><br>
+            <input type="button" form='form-emoji' value="Confirm Selection" id="btnEmotion" class="btn btn-primary">
+            
+            <form id=form-emoji>
+
+                <input type="hidden" id='emotion' name='emotion'>
+                <input type="hidden" id='journalowner' name='journalowner'>
+                <br><br>
+                <div id='response'></div>
+
+            </form>
+        </div>
+
+
+        <div class="col-md-8 content-wrapper " id="div-journal" style="display: none;">
+            <form id="writing" >
+                <div id=journalerror></div>
+               <label for="title">Title: </label>
+               <input type="text" name="journaltitle" id="journalTitle"><br><br>
+                
+               
+               <div class="text-center"> 
+                    <textarea id="journalWriting" name="journalwriting" placeholder="Tell me, how you are feeling? What is happening?"></textarea>
+                </div><br><br>
+
+
+                <input type="button" value="Publish to Journal" id="btnPublish" class='journalbtn'>
+                
+                <input type="button" value="Return to Main" id="btnBTMain" class='journalbtn' >
+                <br>
+
+            </form>
+           
+        </div>
+
+
+
+        <div class="col-md-8 content-wrapper " id="div-analyze" style="display: none;">
+            <h2 class='text-center'>Mood Analysis</h2><br>
+            
+            <div class= "text-center">
+                <div id="emotion_data"></div>
+                <br>
+
+                <input type="button" value="Return to Main" id="btnalyze" class='return' >
+
+              <!---  <img id="barchart" width="80%" src= "https://image-charts.com/chart?cht=p3&chs=500x500&chd=t:10,3,6&chl=10%20wins|3%20losses|6%20ties&chan=1000&chlps=font.size,36">-->
+
+            </div>
+       
+        </div>
+
+
+		<div class="col-md-8 content-wrapper" id="div-past" style="display: none;">
+			
+            <h2>Previous Journal Entries</h2><br>
+           
+            <!-- <a href="#" onclick="detailController(4)" >Detail</a> -->
+
+            <div id= "noEntry"></div>
+            <table id="table-tasks" class="table table-bordered">
+                <tr><th>Entry Titles</th></tr>
+            </table>
+
+
+            <div class="text-center">
+				<input type="button" value="Return to Main" id="btnReturn" class='return' >
+            </div>
+		</div>
+
+
+        <div class="col-md-8 content-wrapper " id="div-detail" style="display: none;">
+			<div class='color' style="font-size: 2em;">
+                Title: <span id="detail-taskname"></span><br><br>
+            </div>  
+            <div class='color'>
+                Entry: <span id="detail-description"></span>
+            </div>
+             <form id="form-detail">
+                 <input type="hidden" id="detail-status" name="taskstatus" value ="Complete">
+                 <input type="hidden" id="detail-taskid" name= "taskid">
+             </form><br>
+
+             <div class="text-center">
+                
+                <input type="button" value="Previous Entries" id="btnPrevEntries" class="return">
+             </div>
+		</div>
+
+
+		<div class="col-md-8 content-wrapper " id="div-bored" style="display: none;">
+            
+            <div id="activity-response"></div>
+            <form id="form-bored">
+                <div class="text-center">
+                    <h2>Random Activity</h2>
+                    <br>
+                    <p class='color'>Doing a new activity is a great way relax and find positive emotions</p>
+                    <br>
+                    <div id=act class="color"></div>
+                    <br>
+                
+                    <input type="button" value="Randomize" id="btnRandom" class="return">
+                    <div class='divider'></div>
+                    <input type="button" value="Return to Main" id="backbtn" class="return">
+                </div>
+        
+            </form> 
+
+        </div>
+       
+
+
+    <div class="col-md-2"></div>
+    </div>
+
+<div class="row">
+    <div class="col-md-12 text-center">
+        <div>
+            &nbsp;
+        </div>
+    </div>
+</div>
+
+</div> <!-- container //-->
+
+<br>
+    <div id="bottom" class="container-fluid">
+        <div class="row">
+            <div id="copy-right" class="col-md-12 text-center">
+            &copy; 2021 Mood Journal Application
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+				&nbsp; <!-- place holder for additional footer content -->
+            </div>
+        </div>
+    </div>
+</body>
+</html>
